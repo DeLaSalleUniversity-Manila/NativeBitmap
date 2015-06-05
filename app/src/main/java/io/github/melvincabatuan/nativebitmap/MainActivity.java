@@ -99,8 +99,26 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        mCamera = Camera.open();
+
+        /// Use front-facing camera (if available)
+
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+
+        for (int camNo = 0; camNo < Camera.getNumberOfCameras(); camNo++) {
+            Camera.CameraInfo camInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(camNo, camInfo);
+
+            if (camInfo.facing==(Camera.CameraInfo.CAMERA_FACING_FRONT)) {
+                mCamera = Camera.open(camNo);
+            }
+        }
+        if (mCamera == null) { /// Xperia LT15i has no front-facing camera, defaults to back camera
+            mCamera = Camera.open();
+        }
+
+
         try{
+
 
             mCamera.setPreviewTexture(surface);
             mCamera.setPreviewCallbackWithBuffer(this);
@@ -137,6 +155,8 @@ public class MainActivity extends Activity implements TextureView.SurfaceTexture
             throw new IllegalStateException();
         }
     }
+
+
 
     private Camera.Size findBestResolution(int pWidth, int pHeight){
         List<Camera.Size> sizes = mCamera.getParameters().getSupportedPreviewSizes();
