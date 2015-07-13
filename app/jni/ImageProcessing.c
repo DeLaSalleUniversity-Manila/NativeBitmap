@@ -1,8 +1,13 @@
 #include "io_github_melvincabatuan_nativebitmap_MainActivity.h"
 
 #include <android/bitmap.h>
+#include <android/log.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
+#define  LOG_TAG    "NativeBitmap"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 #define toInt(pValue) \
  (0xff & (int32_t) pValue)
@@ -17,7 +22,6 @@
            (0xFF000000 | ((pColorB << 6)  & 0x00FF0000) \
                        | ((pColorG >> 2)  & 0x0000FF00) \
                        | ((pColorR >> 10) & 0x000000FF))
-
 
 
 /*
@@ -47,6 +51,7 @@ JNIEXPORT void JNICALL Java_io_github_melvincabatuan_nativebitmap_MainActivity_d
    int32_t colorY, colorU, colorV;
    int32_t colorR, colorG, colorB;
    int32_t y1192;
+ 
    
    /// Convert YUV to RGB
    for (y = 0, yIndex = 0; y < bitmapInfo.height; ++y){
@@ -79,6 +84,7 @@ JNIEXPORT void JNICALL Java_io_github_melvincabatuan_nativebitmap_MainActivity_d
             bitmapContent[yIndex] &= pFilter;
         }
    }
+
 
    /// Release Java byte buffer and unlock backing bitmap
    (*pEnv)-> ReleasePrimitiveArrayCritical(pEnv,pSource,source,0);
